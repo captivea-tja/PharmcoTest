@@ -34,7 +34,7 @@ class ProductionLot(models.Model):
     def _set_container_on_ref(self):
         for rec in self:
             num = rec.name[1:]
-            base35 = base35encode(int(num))
+            base35 = self.base35encode(int(num))
             
             cont = 'D' + base35.zfill(6)
             self.write({
