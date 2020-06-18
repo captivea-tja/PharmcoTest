@@ -50,6 +50,14 @@ class ProductionLot(models.Model):
             
             return name
             
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super(ProductionLot,self).create(vals_list)
+        
+        self._set_container_on_ref()
+        
+        return res
+            
             
                         
         
