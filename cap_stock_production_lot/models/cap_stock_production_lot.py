@@ -44,7 +44,7 @@ class ProductionLot(models.Model):
     def _generate_lot_name(self, cont):
         for rec in self:
             num = cont[1:]
-            base10 = base35decode(int(num))
+            base10 = self.base35decode(int(num))
             
             name = 'C' + str(base10).zfill(10)
             
