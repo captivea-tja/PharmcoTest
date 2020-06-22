@@ -47,8 +47,8 @@
                 <field name="tracking" invisible="1"/> 
             </xpath>
             <xpath expr="//group/group[1]" position="inside">
-                <field name="expiration_date" attrs="{'invisible': [('tracking', '=', 'none')]}"/> 
                 <field name="manufacture_date"/> 
+                <field name="expiration_date" attrs="{'invisible': [('tracking', '=', 'none')]}"/> 
                 <field name="move_id" invisible="1"/> 
                 <field name="tracking" invisible="1"/> 
             </xpath>
