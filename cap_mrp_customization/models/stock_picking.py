@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
@@ -12,4 +11,8 @@ class Picking(models.Model):
             if move_line.lot_id:
                 move_line.lot_id.removal_date = move_line.expiration_date
                 move_line.lot_id.manufacturer_lot = move_line.manufacturer_lot
+                move_line.lot_id.tare_weight = move_line.tare_weight
+                move_line.lot_id.gross_weight = move_line.gross_weight
+                move_line.lot_id.container_type = move_line.container_type
+                move_line.lot_id.manufacture_date = move_line.manufacture_date
         return super(Picking, self).button_validate()
