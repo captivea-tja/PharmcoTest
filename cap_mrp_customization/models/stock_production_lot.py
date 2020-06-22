@@ -16,6 +16,8 @@ class StockProductionLot(models.Model):
     @api.constrains('manufacture_date', 'removal_date')
     def _check_date(self):
         for line in self:
-            if line.manufacture_date and line.removal_date and line.removal_date.date() < line.manufacture_date:
+            if line.manufacture_date and line.removal_date and \
+                    line.removal_date.date() < line.manufacture_date:
                 raise ValidationError(
                     _('The removal date cannot be earlier than the manufacture date.'))
+

@@ -85,7 +85,6 @@
                     <field name="container_type"/>
                 </group>
             </xpath>
-            
         </field>
     </record>
 </odoo>

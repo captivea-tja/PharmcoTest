@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from odoo import api, models, fields, _
 from odoo.exceptions import ValidationError
 
@@ -22,7 +21,6 @@ class StockMoveLine(models.Model):
                 raise ValidationError(
                     _('The expiration date cannot be earlier than the manufacture date.'))
 
-
     def action_generate_serial(self):
         self.ensure_one()
         product_produce_wiz = self.env.ref('stock.view_move_line_form', False)
@@ -30,3 +28,4 @@ class StockMoveLine(models.Model):
             'product_id': self.product_id.id,
             'company_id': self.company_id.id
         })
+
