@@ -4,9 +4,65 @@
         <field name="model">stock.move.line</field>
         <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='lot_id']" position="after">
-                <field name="expiration_date"/>
-                <field name="manufacturer_lot"/>
+            <xpath expr="//tree" position="attributes">
+                <attribute name='editable'/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="cap_view_stock_move_nosuggest_operations_inherited" model="ir.ui.view">
+        <field name="name">cap.view.stock.move.nosuggest.operations.inherited</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_stock_move_nosuggest_operations"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='move_line_nosuggest_ids']" position="replace">
+                <field name="move_line_nosuggest_ids" attrs="{'readonly': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}" context="{'tree_view_ref': 'stock.view_stock_move_line_operation_tree','default_picking_id': picking_id, 'default_move_id': id, 'default_product_id': product_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_company_id': company_id}">
+                    <tree>
+                        <field name="location_dest_id"/>
+                        <field name="lot_id"/>
+                        <field name="manufacturer_lot"/>
+                        <field name="manufacture_date"/>
+                        <field name="expiration_date"/>
+                        <field name="qty_done"/>
+                        <field name="product_uom_id"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="cap_view_move_line_form_inherited" model="ir.ui.view">
+        <field name="name">cap.view.move.line.form.inherited</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_id']" position="replace">
+            </xpath>
+            <xpath expr="//group/group[2]" position="inside">
+                <field name="tare_weight"/> 
+                <field name="gross_weight"/> 
+                <field name="container_type"/>
+                <field name="manufacturer_lot" attrs="{'invisible': [('tracking', '=', 'none')]}"/>  
+                <field name="move_id" invisible="1"/> 
+                <field name="tracking" invisible="1"/> 
+            </xpath>
+            <xpath expr="//group/group[1]" position="inside">
+                <field name="manufacture_date"/> 
+                <field name="expiration_date" attrs="{'invisible': [('tracking', '=', 'none')]}"/> 
+                <field name="move_id" invisible="1"/> 
+                <field name="tracking" invisible="1"/> 
+            </xpath>
+            <xpath expr="//field[@name='picking_id']" position="after">
+                <div class="o_row" attrs="{'invisible': [('tracking', '=', 'none')]}">
+                    <label for="lot_id" groups="stock.group_production_lot" style="font-weight:bold;" 
+                        attrs="{'invisible': [('tracking', '=', 'none')]}"/> 
+                    <field name="lot_id" groups="stock.group_production_lot"
+                        context="{'default_product_id': product_id, 'active_picking_id': picking_id}" 
+                        attrs="{'invisible': [('lot_id', '=', False),('lot_name', '!=', False), ('tracking', '=', 'none')]}"/>
+                    <button name="action_generate_serial" type="object" 
+                        class="btn btn-primary fa fa-plus-square-o" aria-label="Creates a new serial/lot number" title="Creates a new serial/lot number" role="img" context="{'move_id': move_id}"
+                        attrs="{'invisible': [('lot_id', '!=', False)]}"/>
+                </div>
             </xpath>
         </field>
     </record>
@@ -17,7 +73,17 @@
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='ref']" position="after">
-                <field name="manufacturer_lot"/>
+                <field name="manufacturer_lot" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='removal_date']" position="before">
+                <field name="manufacture_date"/>
+            </xpath>
+            <xpath expr="//group[@name='main_group']/group" position="after">
+                <group>
+                    <field name="tare_weight"/> 
+                    <field name="gross_weight"/> 
+                    <field name="container_type"/>
+                </group>
             </xpath>
         </field>
     </record>

@@ -19,6 +19,8 @@
     # always loaded
     'data': [
         'views/view_stock_move_line_inherited.xml',
+        'views/stock_inventory_views.xml',
+        'wizard/mrp_product_product_views.xml',
     ],
 
 }

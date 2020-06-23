@@ -1,0 +1,17 @@
+<odoo>
+    <record id="cap_view_stock_inventory_line_tree2_inherited" model="ir.ui.view">
+        <field name="name">cap.view.stock.inventory.line.tree2.inherited</field>
+        <field name="model">stock.inventory.line</field>
+        <field name="inherit_id" ref="stock.stock_inventory_line_tree2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='prod_lot_id']" position="after">
+                <field name="ref_lot_id" groups="stock.group_production_lot" width="0.8"
+                       attrs="{'readonly': ['|', '|',
+                            ('product_tracking', '=', 'none'),
+                            ('is_editable', '=', False),
+                            ('state', '!=', 'confirm')]}"
+                       context="{'default_product_id': product_id, 'default_company_id': company_id}" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

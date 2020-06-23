@@ -1,0 +1,21 @@
+<odoo>
+    <record id="cap_view_mrp_product_produce_wizard_inherited" model="ir.ui.view">
+        <field name="name">cap.view.mrp.product.produce.wizard.inherited</field>
+        <field name="model">mrp.product.produce</field>
+        <field name="inherit_id" ref="mrp.view_mrp_product_produce_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[2]" position="after">
+                <field name="manufacture_date"/> 
+                <field name="manufacturer_lot"/> 
+            </xpath>
+            <xpath expr="//form/group/group" position="after">
+                <group>
+                    <field name="tare_weight"/> 
+                    <field name="gross_weight"/> 
+                    <field name="container_type"/>
+                    <field name="expiration_date"/> 
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
