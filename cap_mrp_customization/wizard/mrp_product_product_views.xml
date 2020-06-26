@@ -5,15 +5,15 @@
         <field name="inherit_id" ref="mrp.view_mrp_product_produce_wizard"/>
         <field name="arch" type="xml">
             <xpath expr="//div[2]" position="after">
-                <field name="manufacture_date"/> 
-                <field name="manufacturer_lot"/> 
+                <field name="manufacture_date" required="1"/>
+                <field name="manufacturer_lot" required="1"/>
             </xpath>
             <xpath expr="//form/group/group" position="after">
                 <group>
-                    <field name="tare_weight"/> 
-                    <field name="gross_weight"/> 
-                    <field name="container_type"/>
-                    <field name="expiration_date"/> 
+                    <field name="tare_weight" required="1"/>
+                    <field name="gross_weight" required="1"/>
+                    <field name="container_type" required="1"/>
+                    <field name="expiration_date" required="1"/>
                 </group>
             </xpath>
         </field>
