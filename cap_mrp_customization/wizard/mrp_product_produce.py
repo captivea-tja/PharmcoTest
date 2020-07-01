@@ -8,10 +8,15 @@ class MrpProductProduce(models.TransientModel):
 
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight")
+    gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
     container_type = fields.Char(string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture", default=lambda self: fields.Date.today())
     expiration_date = fields.Date(string="Expiration Date")
+
+    @api.depends('tare_weight', 'qty_producing')
+    def _compute_gross_weight(self):
+        for line in self:
+            line.gross_weight = line.qty_producing + line.tare_weight
 
     @api.constrains('manufacture_date', 'expiration_date')
     def _check_date(self):

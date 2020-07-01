@@ -9,9 +9,14 @@ class StockMoveLine(models.Model):
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     expiration_date = fields.Date(string="Expiration Date")
     tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight")
+    gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
     container_type = fields.Char(string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
+
+    @api.depends('tare_weight', 'qty_done')
+    def _compute_gross_weight(self):
+        for line in self:
+            line.gross_weight = line.qty_done + line.tare_weight
 
     @api.constrains('manufacture_date', 'expiration_date')
     def _check_date(self):
@@ -37,7 +42,6 @@ class StockMoveLine(models.Model):
                 'manufacturer_lot': move_id.manufacturer_lot,
                 'expiration_date': move_id.expiration_date,
                 'tare_weight': move_id.tare_weight,
-                'gross_weight': move_id.gross_weight,
                 'container_type': move_id.container_type,
                 'manufacture_date': move_id.manufacture_date
             })

@@ -18,7 +18,6 @@
             <xpath expr="//group/group" position="after">
                 <group>
                     <field name="tare_weight" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
-                    <field name="gross_weight" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                     <field name="container_type" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                     <field name="manufacturer_lot" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                     <field name="expiration_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>

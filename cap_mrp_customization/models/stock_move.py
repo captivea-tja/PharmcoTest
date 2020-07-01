@@ -9,9 +9,10 @@ class StockMove(models.Model):
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     expiration_date = fields.Date(string="Expiration Date")
     tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight")
     container_type = fields.Char(string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
+
+
 
     def generate_sequence_number(self):
         sequence_ref = self.env.ref('stock.sequence_production_lots')
