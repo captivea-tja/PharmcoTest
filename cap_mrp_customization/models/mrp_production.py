@@ -19,18 +19,10 @@ class MrpProduction(models.Model):
         for line in self:
             line.gross_weight = line.product_qty + line.tare_weight
 
-    def open_produce_product(self):
-        res = super(MrpProduction, self).open_produce_product()
-        if res:
-            context = res.get('context') or {}
-            if isinstance(context, str) and context == '{}':
-                context = {}
-            context.update({
-                'default_manufacturer_lot': self.manufacturer_lot or '',
-                'default_tare_weight': self.tare_weight or '',
-                'default_container_type': self.container_type or '',
-                'default_manufacture_date': self.manufacture_date or '',
-                'default_expiration_date': self.expiration_date or '',
-            })
-            res.update({'context': context})
-        return res
+    @api.constrains('manufacture_date', 'expiration_date')
+    def _check_date(self):
+        for line in self:
+            if line.manufacture_date and line.expiration_date and \
+                    line.expiration_date < line.manufacture_date:
+                raise ValidationError(
+                    _('The removal date cannot be earlier than the manufacture date.'))

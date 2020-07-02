@@ -8,13 +8,13 @@
             <xpath expr="//field[@name='finished_move_line_ids']" position="before">
                 <group>
                     <group>
-                        <field name="manufacture_date"/>
-                        <field name="manufacturer_lot"/>
-                        <field name="container_type"/>
+                        <field name="manufacture_date" required="1"/>
+                        <field name="manufacturer_lot" required="1"/>
+                        <field name="container_type" required="1"/>
                     </group>
                     <group>
-                        <field name="expiration_date"/>
-                        <field name="tare_weight"/>
+                        <field name="expiration_date" required="1"/>
+                        <field name="tare_weight" required="1"/>
                         <field name="gross_weight"/>
                     </group>
                 </group>
