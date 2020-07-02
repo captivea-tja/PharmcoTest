@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cap_report_stock_body_print" name="Captivea Custom Stock Body Print Report" 
+        inherit_id="stock.report_stock_body_print" priority="30">
+        <xpath expr="//tr[hasclass('o_report_header')]/th[4]" position="after">
+            <th class="o_report_line_header">Manufacturer's Lot #</th>
+        </xpath>
+    </template>
+    <template id="cap_report_stock_inventory" name="Captivea Custom Stock Inventory Report" 
+        inherit_id="stock.report_stock_inventory" priority="30">
+        <xpath expr="//tr[hasclass('o_report_header')]/th[4]" position="after">
+            <th class="o_report_line_header">Manufacturer's Lot #</th>
+        </xpath>
+    </template>
+</odoo>

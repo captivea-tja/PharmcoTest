@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cap_view_mrp_production_form_view_inherited" model="ir.ui.view">
+        <field name="name">cap.view.mrp.production.form.view.inherited</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='finished_move_line_ids']" position="before">
+                <group>
+                    <group>
+                        <field name="manufacture_date"/>
+                        <field name="manufacturer_lot"/>
+                        <field name="container_type"/>
+                    </group>
+                    <group>
+                        <field name="expiration_date"/>
+                        <field name="tare_weight"/>
+                        <field name="gross_weight"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
