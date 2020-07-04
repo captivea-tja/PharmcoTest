@@ -12,29 +12,21 @@ class MrpProductProduce(models.TransientModel):
             line.gross_weight = line.qty_producing + line.tare_weight
 
     def do_produce(self):
-        context = self._context or {}
-        mrp_id = False
-        if context and context.get('params') and context['params'].get('model') == 'mrp.production':
-            mrp_id = self.env['mrp.production'].browse(context['params'].get('id'))
-        if self.finished_lot_id and mrp_id:
-            self.finished_lot_id.manufacturer_lot = mrp_id.manufacturer_lot
-            self.finished_lot_id.tare_weight = mrp_id.tare_weight
-            self.finished_lot_id.gross_weight = mrp_id.gross_weight
-            self.finished_lot_id.container_type = mrp_id.container_type
-            self.finished_lot_id.manufacture_date = mrp_id.manufacture_date
-            self.finished_lot_id.removal_date = mrp_id.expiration_date
+        if self.finished_lot_id and self.production_id:
+            self.finished_lot_id.manufacturer_lot = self.production_id.manufacturer_lot
+            self.finished_lot_id.tare_weight = self.production_id.tare_weight
+            self.finished_lot_id.gross_weight = self.production_id.gross_weight
+            self.finished_lot_id.container_type = self.production_id.container_type
+            self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
+            self.finished_lot_id.removal_date = self.production_id.expiration_date
         return super(MrpProductProduce, self).do_produce()
 
     def continue_production(self):
-        context = self._context or {}
-        mrp_id = False
-        if context and context.get('params') and context['params'].get('model') == 'mrp.production':
-            mrp_id = self.env['mrp.production'].browse(context['params'].get('id'))
-        if self.finished_lot_id and mrp_id:
-            self.finished_lot_id.manufacturer_lot = mrp_id.manufacturer_lot
-            self.finished_lot_id.tare_weight = mrp_id.tare_weight
-            self.finished_lot_id.gross_weight = mrp_id.gross_weight
-            self.finished_lot_id.container_type = mrp_id.container_type
-            self.finished_lot_id.manufacture_date = mrp_id.manufacture_date
-            self.finished_lot_id.removal_date = mrp_id.expiration_date
+        if self.finished_lot_id and self.production_id:
+            self.finished_lot_id.manufacturer_lot = self.production_id.manufacturer_lot
+            self.finished_lot_id.tare_weight = self.production_id.tare_weight
+            self.finished_lot_id.gross_weight = self.production_id.gross_weight
+            self.finished_lot_id.container_type = self.production_id.container_type
+            self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
+            self.finished_lot_id.removal_date = self.production_id.expiration_date
         return super(MrpProductProduce, self).continue_production()

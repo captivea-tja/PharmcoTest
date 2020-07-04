@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Cap Assign Lots",
+    'name': "Cap Auto Assign Lots / Serails",
 
     'summary': """
         Allows to work with 5 components on workorder at a time""",

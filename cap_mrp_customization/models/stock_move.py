@@ -12,8 +12,6 @@ class StockMove(models.Model):
     container_type = fields.Char(string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
 
-
-
     def generate_sequence_number(self):
         sequence_ref = self.env.ref('stock.sequence_production_lots')
         if sequence_ref and sequence_ref.number_next_actual:
