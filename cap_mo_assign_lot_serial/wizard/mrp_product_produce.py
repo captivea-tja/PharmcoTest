@@ -24,7 +24,9 @@ class MrpProductProduce(models.TransientModel):
             if line_values[0].get('raw_product_produce_id'):
                 line_values[0].pop('raw_product_produce_id', None)
             if line_values[0].get('finished_product_produce_id'):
-                line_values[0].pop('finished_product_produce_id', None)
+                continue
+                # line_values[0].pop('finished_product_produce_id', None)
             for line_val in line_values:
                 line_val.update({'production_id': self.production_id.id})
-            self.env['move.line.component'].create(line_values)
+            if self.production_id and self.production_id.move_raw_ids:
+                products = self.production_id.move_raw_ids.mapped('product_id.id')

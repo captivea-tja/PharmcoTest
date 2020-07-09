@@ -45,8 +45,10 @@ class MrpProduction(models.Model):
         context = self._context.copy() or False
         if not self.next_serial:
             raise UserError(_("You need to set a Serial Number before generating more."))
-        if self.state != 'confirmed':
+        if self.state not in ['confirmed', 'planned', 'progress', 'to_close']:
             raise UserError(_("You need to confirm the Manufacturing order generating Serial Number."))
+        if len(self.finished_move_line_ids.ids) > self.product_qty:
+            raise UserError(_("Already produced all defined products."))
         self.with_context(context)._generate_serial_numbers()
 
     @api.onchange('next_serial_qty')
