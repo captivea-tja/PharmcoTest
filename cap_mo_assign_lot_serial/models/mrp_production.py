@@ -51,11 +51,13 @@ class MrpProduction(models.Model):
             raise UserError(_("Already produced all defined products."))
         self.with_context(context)._generate_serial_numbers()
 
-    @api.onchange('next_serial_qty')
+    @api.onchange('next_serial_qty', 'finished_move_line_ids')
     def _onchange_next_serial_qty(self):
         if self.product_id and self.product_id.tracking == 'lot':
             serial_range = int(int(self.product_uom_qty) / self.next_serial_qty)
             self.next_serial_count = serial_range
+            if self.has_tracking == 'lot':
+                self.next_serial_count = (self.product_qty - len(self.finished_move_line_ids.ids))
 
     def _generate_serial_numbers(self, next_serial_count=False):
         """ This method will generate `lot_name` from a string (field
