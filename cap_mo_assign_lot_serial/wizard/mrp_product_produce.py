@@ -21,11 +21,11 @@ class MrpProductProduce(models.TransientModel):
             qty_to_consume = self._prepare_component_quantity(move, self.qty_producing)
             line_values = self._generate_lines_values(move, qty_to_consume)
             self.env['mrp.product.produce.line'].create(line_values)
-            if line_values[0].get('raw_product_produce_id'):
-                line_values[0].pop('raw_product_produce_id', None)
-            if line_values[0].get('finished_product_produce_id'):
-                continue
-                # line_values[0].pop('finished_product_produce_id', None)
-            for line_val in line_values:
-                line_val.update({'production_id': self.production_id.id})
-            self.env['move.line.component'].create(line_values)
+        #     if line_values[0].get('raw_product_produce_id'):
+        #         line_values[0].pop('raw_product_produce_id', None)
+        #     if line_values[0].get('finished_product_produce_id'):
+        #         continue
+        #         # line_values[0].pop('finished_product_produce_id', None)
+        #     for line_val in line_values:
+        #         line_val.update({'production_id': self.production_id.id})
+        #     self.env['move.line.component'].create(line_values)

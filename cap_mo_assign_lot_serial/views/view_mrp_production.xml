@@ -4,6 +4,9 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='open_produce_product']" position="before">
+                <button name="produce_predefined_products" attrs="{'invisible': ['|', '|', '|', '|', ('state', '=', 'to_close'), ('is_locked', '=', False), ('reservation_state', '!=', 'assigned'), ('routing_id', '!=', False), ('move_line_component_ids', '=', False)]}" string="Produce Predefined" type="object" class="oe_highlight"/>
+            </xpath>
             <xpath expr="//field[@name='routing_id']" position="after">
                 <field name="display_assign_serial" invisible="1"/>
                 <field name="has_tracking" invisible="1"/>
@@ -29,12 +32,13 @@
                 </div>
             </xpath>
             <xpath expr="//notebook/page[2]" position="after">
-                <page name="move_line_component_ids" string="Finished Products Components">
-                    <field name="move_line_component_ids" attrs="{'invisible': [('move_line_component_ids', '=', [])]}"
+                <page name="move_line_component_ids" string="Finished Products Components" attrs="{'invisible': [('move_line_component_ids', '=', [])]}">
+                    <field name="move_line_component_ids" attrs="{'invisible': [('move_line_component_ids', '=', [])], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"
                         nolabel="1" context="{'w_production': True, 'active_id': active_id}">
-                            <tree editable="bottom" delete="0" decoration-danger="(qty_to_consume &lt; qty_done)">
+                            <tree editable="bottom" decoration-danger="(qty_to_consume &lt; qty_done)">
                                 <field name="production_id" invisible="1"/>
                                 <field name="company_id" invisible="1"/>
+                                <field name="finished_lot_id" required="1"/>
                                 <field name="product_id" attrs="{'readonly': [('move_id', '!=', False)]}" required="1" domain="[('id', '!=', parent.product_id), ('type', 'in', ['product', 'consu']), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" force_save="1"/>
                                 <field name="product_tracking" invisible="1"/>
                                 <field name="lot_id" attrs="{'readonly': [('product_tracking', '=', 'none')]}" context="{'default_product_id': product_id, 'active_mo_id': production_id, 'default_company_id': company_id}" groups="stock.group_production_lot"/>

@@ -8,13 +8,13 @@
             <xpath expr="//field[@name='finished_move_line_ids']" position="before">
                 <group>
                     <group>
-                        <field name="manufacture_date" attrs="{'required': [('has_tracking', '!=', 'none')]}"/>
-                        <field name="manufacturer_lot" attrs="{'required': [('has_tracking', '!=', 'none')]}"/>
-                        <field name="container_type" attrs="{'required': [('has_tracking', '!=', 'none')]}"/>
+                        <field name="manufacture_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
+                        <field name="manufacturer_lot" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
+                        <field name="container_type" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
                     </group>
                     <group>
-                        <field name="expiration_date" attrs="{'required': [('has_tracking', '!=', 'none')]}"/>
-                        <field name="tare_weight" attrs="{'required': [('has_tracking', '!=', 'none')]}"/>
+                        <field name="expiration_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
+                        <field name="tare_weight" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
                         <field name="gross_weight"/>
                     </group>
                 </group>
