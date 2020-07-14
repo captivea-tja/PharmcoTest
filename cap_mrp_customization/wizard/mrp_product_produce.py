@@ -18,7 +18,7 @@ class MrpProductProduce(models.TransientModel):
             self.finished_lot_id.gross_weight = self.production_id.gross_weight
             self.finished_lot_id.container_type = self.production_id.container_type
             self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
-            self.finished_lot_id.removal_date = self.production_id.expiration_date
+            # self.finished_lot_id.removal_date = self.production_id.expiration_date
         return super(MrpProductProduce, self).do_produce()
 
     def continue_production(self):
@@ -28,5 +28,5 @@ class MrpProductProduce(models.TransientModel):
             self.finished_lot_id.gross_weight = self.production_id.gross_weight
             self.finished_lot_id.container_type = self.production_id.container_type
             self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
-            self.finished_lot_id.removal_date = self.production_id.expiration_date
+            # self.finished_lot_id.removal_date = self.production_id.expiration_date
         return super(MrpProductProduce, self).continue_production()
