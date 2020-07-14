@@ -111,9 +111,8 @@ class MrpProduction(models.Model):
                 finished_lot_id = self.move_line_component_ids.mapped('finished_lot_id.id')
                 qty_per_material = raw_id.product_uom_qty / self.product_qty
                 for lot in finished_lot_id:
-                    if qty_per_material != sum(self.move_line_component_ids.filtered(lambda d: d.product_id == raw_id.product_id and d.finished_lot_id.id == lot).mapped('qty_done')):
-                        raise ValidationError(_("Please assign lot to components that will be utilized in manufacturing products."))
-
+                   if qty_per_material != sum(self.move_line_component_ids.filtered(lambda d: d.product_id == raw_id.product_id and d.finished_lot_id.id == lot).mapped('qty_done')):
+                        raise ValidationError(_("Please verify the quantity of consumed material products that will be utilized for manufacturing products."))
         context = self._context.copy() or {}
         context.update({'model': 'mrp.production', 'active_id': self.id})
         lot_names = self._generate_serial_numbers(bypass_line_creation=True)
@@ -133,7 +132,6 @@ class MrpProduction(models.Model):
                 default_vals.update({'qty_producing': 1})
             product_produce_wizard = self.env['mrp.product.produce'].with_context(
                 context).create(default_vals)
-            print("product_produce_wizard.finished_lot_id.name :::::::::: ", product_produce_wizard.finished_lot_id.name)
             product_produce_wizard.with_context(context)._generate_produce_lines()
             for mv_line in self.move_line_component_ids.filtered(lambda l: l.finished_lot_id == finished_lot_id):
                 linked_move = product_produce_wizard.raw_workorder_line_ids.filtered(
