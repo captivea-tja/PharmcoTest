@@ -2,12 +2,29 @@
 
 from odoo import api, models, fields, _
 from re import findall as regex_findall, split as regex_split
+from odoo.exceptions import ValidationError
 
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
     next_serial_qty = fields.Integer('Quantity per Lot')
+
+    @api.model
+    def create(self, vals):
+        next_serial_qty = False
+        product_uom_qty = vals.get('product_uom_qty')
+        product_id = vals.get('product_id')
+        tracking = 'none'
+        if product_id:
+            tracking = self.env['product.product'].browse(product_id).tracking
+        if product_uom_qty and tracking == 'lot':
+            serial_range = product_uom_qty / product_uom_qty
+            vals.update({'next_serial_qty': product_uom_qty, 'next_serial_count': serial_range})
+        elif product_uom_qty and tracking == 'serial':
+            serial_range = product_uom_qty / 1
+            vals.update({'next_serial_qty': 1, 'next_serial_count': serial_range})
+        return super(StockMove, self).create(vals)
 
     @api.depends('has_tracking', 'picking_type_id.use_create_lots', 'picking_type_id.use_existing_lots', 'state')
     def _compute_display_assign_serial(self):
@@ -37,7 +54,7 @@ class StockMove(models.Model):
         # We look if the serial number contains at least one digit.
         caught_initial_number = regex_findall("\d+", self.next_serial)
         if not caught_initial_number:
-            raise UserError(_('The serial number must contain at least one digit.'))
+            raise ValidationError(_('The serial number must contain at least one digit.'))
         # We base the serie on the last number find in the base serial number.
         initial_number = caught_initial_number[-1]
         padding = len(initial_number)

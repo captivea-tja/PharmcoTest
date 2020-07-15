@@ -9,8 +9,13 @@ class StockMove(models.Model):
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     expiration_date = fields.Date(string="Expiration Date")
     tare_weight = fields.Float(string="Tare Weight")
-    container_type = fields.Char(string="Container Type")
+    container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
+        ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
+        ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'),
+        ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
+        ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
+    lot_id = fields.Many2one('stock.production.lot', string="Lot to consume")
 
     def generate_sequence_number(self):
         sequence_ref = self.env.ref('stock.sequence_production_lots')

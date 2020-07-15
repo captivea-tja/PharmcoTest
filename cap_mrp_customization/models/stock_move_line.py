@@ -10,7 +10,11 @@ class StockMoveLine(models.Model):
     expiration_date = fields.Date(string="Expiration Date")
     tare_weight = fields.Float(string="Tare Weight")
     gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
-    container_type = fields.Char(string="Container Type")
+    container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
+        ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
+        ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'),
+        ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
+        ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
 
     @api.depends('tare_weight', 'qty_done')

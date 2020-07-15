@@ -14,6 +14,12 @@ class MrpProduction(models.Model):
     next_serial_count = fields.Integer('Number of SN', copy=False, help="Number of producing finished products per click.")
     next_serial_qty = fields.Integer('Quantity per Lot')
     move_line_component_ids = fields.One2many('move.line.component', 'production_id', string='Finished Products Components')
+    is_components_created = fields.Boolean(string='Components Created?')
+
+    # def write(self, vals):
+    #     if vals.get('move_line_component_ids') and len(vals['move_line_component_ids']) == 1:
+    #         vals.update({'is_components_created': False})
+    #     return super(MrpProduction, self).write(vals)
 
     @api.onchange('has_tracking', 'product_qty')
     def _onchange_next_serial_count(self):
@@ -141,6 +147,8 @@ class MrpProduction(models.Model):
             product_produce_wizard.with_context(context).do_produce()
 
     def _record_mrp_production(self, lot_names):
+        if self.is_components_created:
+            raise ValidationError(_("You have already created enough components that are required to produce the finished products."))
         context = self._context.copy() or {}
         context.update({'model': 'mrp.production', 'active_id': self.id})
         for lot_name in lot_names:
@@ -166,8 +174,7 @@ class MrpProduction(models.Model):
                 for line_val in line_values:
                     line_val.update({'production_id': self.id, 'finished_lot_id': finished_lot_id.id})
                 self.env['move.line.component'].create(line_values)
-        
-
+        self.is_components_created = True
 
 
 class MoveLineComponent(models.Model):
@@ -178,6 +185,13 @@ class MoveLineComponent(models.Model):
 
     production_id = fields.Many2one('mrp.production', 'Manufacturing Order', required=True, check_company=True)
     finished_lot_id = fields.Many2one('stock.production.lot', string='Finished Lot Id')
+    total_qty_to_consume = fields.Float(string='Total To Consume', compute='_compute_total_qty_to_consume')
+
+    @api.depends('qty_to_consume')
+    def _compute_total_qty_to_consume(self):
+        for obj in self:
+            obj.total_qty_to_consume = sum(self.search([('production_id', '=', obj.production_id.id), 
+                ('product_id', '=', obj.product_id.id)]).mapped('qty_to_consume'))
 
     def _get_production(self):
         return self.production_id

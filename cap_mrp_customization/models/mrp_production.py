@@ -11,7 +11,11 @@ class MrpProduction(models.Model):
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     tare_weight = fields.Float(string="Tare Weight")
     gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
-    container_type = fields.Char(string="Container Type")
+    container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
+        ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
+        ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'),
+        ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
+        ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture", default=lambda self: fields.Date.today())
     # expiration_date = fields.Date(string="Expiration Date")
 
@@ -27,3 +31,16 @@ class MrpProduction(models.Model):
     #                 line.expiration_date < line.manufacture_date:
     #             raise ValidationError(
     #                 _('The removal date cannot be earlier than the manufacture date.'))
+
+
+class MoveLineComponent(models.Model):
+    _inherit = 'move.line.component'
+
+    @api.model
+    def create(self, vals):
+        if vals.get('move_id'):
+            move_lot_id = self.env['stock.move'].search([('id', '=', vals.get('move_id'))]).lot_id.id
+            product_tracking = self.env['product.product'].search([('id', '=', vals.get('product_id'))]).tracking
+            if move_lot_id and product_tracking == 'lot':
+                vals.update({'lot_id': move_lot_id})
+        return super(MoveLineComponent, self).create(vals)
