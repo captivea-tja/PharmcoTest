@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="cap_view_stock_move_line_inherited" model="ir.ui.view">
         <field name="name">cap.view.stock.move.line.inherited</field>
@@ -6,6 +7,41 @@
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name='editable'/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="cap_view_stock_move_operations_inherited" model="ir.ui.view">
+        <field name="name">cap.view.stock.move.operations.inherited</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/group" position="after">
+                <group>
+                    <field name="tare_weight" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                    <field name="container_type" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                    <field name="manufacturer_lot" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                    <field name="expiration_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                </group>
+            </xpath>
+            <xpath expr="//div[3]" position="after">
+                <field name="manufacture_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                <field name="has_tracking" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='next_serial']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_serial']" position="before">
+                <label for="next_serial" attrs="{'invisible': [('display_assign_serial', '=', False)]}"
+                        style="font-weight:bold;" />
+                <div class="o_row" attrs="{'invisible': [('has_tracking', '=', 'none')]}">
+                    <field name="next_serial"
+                        context="{'default_product_id': product_id, 'active_picking_id': picking_id}"
+                        attrs="{'invisible': [('has_tracking', '=', 'none')]}"/>
+                    <button name="generate_sequence_number" type="object"
+                        class="btn btn-primary fa fa-plus-square-o" aria-label="Creates a new serial/lot number" title="Generates next serial/lot number" role="img"
+                        attrs="{'invisible': [('has_tracking', '=', 'none')]}"/>
+                </div>
             </xpath>
         </field>
     </record>
@@ -36,21 +72,22 @@
         <field name="model">stock.move.line</field>
         <field name="inherit_id" ref="stock.view_move_line_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='lot_id']" position="replace">
+            <xpath expr="//field[@name='lot_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//group/group[2]" position="inside">
-                <field name="tare_weight"/> 
-                <field name="gross_weight"/> 
-                <field name="container_type"/>
-                <field name="manufacturer_lot" attrs="{'invisible': [('tracking', '=', 'none')]}"/>  
-                <field name="move_id" invisible="1"/> 
-                <field name="tracking" invisible="1"/> 
+                <field name="tare_weight" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="gross_weight" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="container_type" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="manufacturer_lot" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="move_id" invisible="1"/>
+                <field name="tracking" invisible="1"/>
             </xpath>
             <xpath expr="//group/group[1]" position="inside">
-                <field name="manufacture_date"/> 
-                <field name="expiration_date" attrs="{'invisible': [('tracking', '=', 'none')]}"/> 
-                <field name="move_id" invisible="1"/> 
-                <field name="tracking" invisible="1"/> 
+                <field name="manufacture_date" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="expiration_date" attrs="{'invisible': [('tracking', '=', 'none')], 'required': [('tracking', '!=', 'none')]}"/>
+                <field name="move_id" invisible="1"/>
+                <field name="tracking" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='picking_id']" position="after">
                 <div class="o_row" attrs="{'invisible': [('tracking', '=', 'none')]}">

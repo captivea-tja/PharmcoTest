@@ -6,18 +6,27 @@ from odoo.exceptions import ValidationError
 class MrpProductProduce(models.TransientModel):
     _inherit = "mrp.product.produce"
 
-    manufacturer_lot = fields.Char(string="Manufacturer's Lot")
-    tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight")
-    container_type = fields.Char(string="Container Type")
-    manufacture_date = fields.Date(string="Date of Manufacture", default=lambda self: fields.Date.today())
-    expiration_date = fields.Date(string="Expiration Date")
-
-    @api.constrains('manufacture_date', 'expiration_date')
-    def _check_date(self):
+    @api.depends('tare_weight', 'qty_producing')
+    def _compute_gross_weight(self):
         for line in self:
-            if line.manufacture_date and line.expiration_date and \
-                    line.expiration_date < line.manufacture_date:
-                raise ValidationError(
-                    _('The removal date cannot be earlier than the manufacture date.'))
+            line.gross_weight = line.qty_producing + line.tare_weight
 
+    def do_produce(self):
+        if self.finished_lot_id and self.production_id:
+            self.finished_lot_id.manufacturer_lot = self.production_id.manufacturer_lot
+            self.finished_lot_id.tare_weight = self.production_id.tare_weight
+            self.finished_lot_id.gross_weight = self.production_id.gross_weight
+            self.finished_lot_id.container_type = self.production_id.container_type
+            self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
+            # self.finished_lot_id.removal_date = self.production_id.expiration_date
+        return super(MrpProductProduce, self).do_produce()
+
+    def continue_production(self):
+        if self.finished_lot_id and self.production_id:
+            self.finished_lot_id.manufacturer_lot = self.production_id.manufacturer_lot
+            self.finished_lot_id.tare_weight = self.production_id.tare_weight
+            self.finished_lot_id.gross_weight = self.production_id.gross_weight
+            self.finished_lot_id.container_type = self.production_id.container_type
+            self.finished_lot_id.manufacture_date = self.production_id.manufacture_date
+            # self.finished_lot_id.removal_date = self.production_id.expiration_date
+        return super(MrpProductProduce, self).continue_production()

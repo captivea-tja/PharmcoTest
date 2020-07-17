@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="cap_view_stock_inventory_line_tree2_inherited" model="ir.ui.view">
         <field name="name">cap.view.stock.inventory.line.tree2.inherited</field>
