@@ -10,16 +10,17 @@ class MrpProduction(models.Model):
 
     has_tracking = fields.Selection(related='product_id.tracking', string='Product with Tracking')
     display_assign_serial = fields.Boolean(compute='_compute_display_assign_serial')
-    next_serial = fields.Char('First SN')
-    next_serial_count = fields.Integer('Number of SN', copy=False, help="Number of producing finished products per click.")
+    next_serial = fields.Char('First SN', copy=False)
+    next_serial_count = fields.Integer('Number of SN', help="Number of producing finished products per click.")
     next_serial_qty = fields.Integer('Quantity per Lot')
-    move_line_component_ids = fields.One2many('move.line.component', 'production_id', string='Finished Products Components')
-    is_components_created = fields.Boolean(string='Components Created?')
+    move_line_component_ids = fields.One2many('move.line.component', 'production_id', string='Finished Products Components', copy=False)
+    is_components_created = fields.Boolean(string='Components Created?', copy=False)
 
-    # def write(self, vals):
-    #     if vals.get('move_line_component_ids') and len(vals['move_line_component_ids']) == 1:
-    #         vals.update({'is_components_created': False})
-    #     return super(MrpProduction, self).write(vals)
+    def write(self, vals):
+        super(MrpProduction, self).write(vals)
+        if not self.move_line_component_ids:
+            vals.update({'is_components_created': False})
+        return super(MrpProduction, self).write(vals)
 
     @api.onchange('has_tracking', 'product_qty')
     def _onchange_next_serial_count(self):
@@ -58,13 +59,13 @@ class MrpProduction(models.Model):
             raise UserError(_("Already produced all defined products."))
         self.with_context(context)._generate_serial_numbers()
 
-    @api.onchange('next_serial_qty', 'finished_move_line_ids')
-    def _onchange_next_serial_qty(self):
-        if self.product_id and self.product_id.tracking == 'lot':
-            serial_range = int(int(self.product_uom_qty) / self.next_serial_qty)
-            self.next_serial_count = serial_range
-            if self.has_tracking == 'lot':
-                self.next_serial_count = (self.product_qty - len(self.finished_move_line_ids.ids))
+    # @api.onchange('next_serial_qty', 'finished_move_line_ids')
+    # def _onchange_next_serial_qty(self):
+    #     if self.product_id and self.product_id.tracking == 'lot':
+    #         serial_range = int(int(self.product_uom_qty) / self.next_serial_qty)
+    #         self.next_serial_count = serial_range
+    #         if self.has_tracking == 'lot':
+    #             self.next_serial_count = (self.product_qty - len(self.finished_move_line_ids.ids))
 
     def _generate_serial_numbers(self, next_serial_count=False, bypass_line_creation=False):
         """ This method will generate `lot_name` from a string (field
