@@ -14,7 +14,7 @@
     'category': 'Manufacturing/Manufacturing',
 
     # any module necessary for this one to work correctly
-    'depends': ['mrp_workorder'],
+    'depends': ['mrp_workorder', 'cap_mo_assign_lot_serial'],
 
     # always loaded
     'data': [

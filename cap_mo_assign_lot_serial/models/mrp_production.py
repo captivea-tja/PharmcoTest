@@ -5,6 +5,26 @@ from re import findall as regex_findall, split as regex_split
 from odoo.exceptions import UserError, ValidationError
 
 
+class MoveLineComponent(models.Model):
+    _name = 'move.line.component'
+    _inherit = ["mrp.abstract.workorder.line"]
+    _order = 'id desc'
+    _description = "Predefine Components of Finished Products that will get consumed at time of manufacture"
+
+    production_id = fields.Many2one('mrp.production', 'Manufacturing Order', required=True, check_company=True)
+    finished_lot_id = fields.Many2one('stock.production.lot', string='Finished Lot Id')
+    total_qty_to_consume = fields.Float(string='Total To Consume', compute='_compute_total_qty_to_consume')
+
+    @api.depends('qty_to_consume')
+    def _compute_total_qty_to_consume(self):
+        for obj in self:
+            obj.total_qty_to_consume = sum(self.search([('production_id', '=', obj.production_id.id), 
+                ('product_id', '=', obj.product_id.id)]).mapped('qty_to_consume'))
+
+    def _get_production(self):
+        return self.production_id
+
+
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
@@ -176,23 +196,3 @@ class MrpProduction(models.Model):
                     line_val.update({'production_id': self.id, 'finished_lot_id': finished_lot_id.id})
                 self.env['move.line.component'].create(line_values)
         self.is_components_created = True
-
-
-class MoveLineComponent(models.Model):
-    _name = 'move.line.component'
-    _inherit = ["mrp.abstract.workorder.line"]
-    _order = 'id desc'
-    _description = "Predefine Components of Finished Products that will get consumed at time of manufacture"
-
-    production_id = fields.Many2one('mrp.production', 'Manufacturing Order', required=True, check_company=True)
-    finished_lot_id = fields.Many2one('stock.production.lot', string='Finished Lot Id')
-    total_qty_to_consume = fields.Float(string='Total To Consume', compute='_compute_total_qty_to_consume')
-
-    @api.depends('qty_to_consume')
-    def _compute_total_qty_to_consume(self):
-        for obj in self:
-            obj.total_qty_to_consume = sum(self.search([('production_id', '=', obj.production_id.id), 
-                ('product_id', '=', obj.product_id.id)]).mapped('qty_to_consume'))
-
-    def _get_production(self):
-        return self.production_id
