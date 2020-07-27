@@ -15,6 +15,7 @@
                     <group>
                         <!-- <field name="expiration_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/> -->
                         <field name="tare_weight" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
+                        <field name="component_weight"/>
                         <field name="gross_weight"/>
                     </group>
                 </group>
@@ -55,6 +56,37 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="after">
                 <field name='lot_id'/>
+            </xpath>
+        </field>
+    </record>
+    <record id="cap_lot_view_mrp_production_form_view_inherited_inherited" model="ir.ui.view">
+        <field name="name">cap.view_mrp.production.form.view.inherited.inherited</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="cap_mo_assign_lot_serial.cap_lot_view_mrp_production_form_view_inherited"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='next_serial']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_serial_qty']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['lot', 'none'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_serial_count']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_serial']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='generate_sequence_number']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//label[@for='next_serial_count']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='next_serial_count']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_assign_serial_show_details']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot'])]}</attribute>
             </xpath>
         </field>
     </record>

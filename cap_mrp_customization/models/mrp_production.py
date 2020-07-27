@@ -11,6 +11,7 @@ class MrpProduction(models.Model):
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     tare_weight = fields.Float(string="Tare Weight")
     gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
+    component_weight = fields.Float(string="Component Weight", compute="_compute_component_weight")
     container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
         ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
         ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'),
@@ -19,10 +20,25 @@ class MrpProduction(models.Model):
     manufacture_date = fields.Date(string="Date of Manufacture", default=lambda self: fields.Date.today())
     # expiration_date = fields.Date(string="Expiration Date")
 
-    @api.depends('tare_weight', 'product_qty')
+    @api.depends('tare_weight', 'product_qty', 'move_raw_ids')
     def _compute_gross_weight(self):
         for line in self:
-            line.gross_weight = line.product_qty + line.tare_weight
+            gross_weight = 0
+            if line.has_tracking == 'lot':
+                gross_weight = line.product_qty + line.tare_weight
+            if line.has_tracking == 'serial':
+                gross_weight = line.component_weight + line.tare_weight
+            line.gross_weight = gross_weight
+
+    @api.depends('move_raw_ids', 'state')
+    def _compute_component_weight(self):
+        for line in self:
+            total = 0
+            if line.has_tracking == 'serial':
+                for component in line.move_raw_ids:
+                    if component.product_uom.name == 'kg':
+                        total += component.product_uom_qty
+            line.component_weight = total
 
     # @api.constrains('manufacture_date', 'expiration_date')
     # def _check_date(self):

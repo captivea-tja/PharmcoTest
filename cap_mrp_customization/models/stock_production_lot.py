@@ -10,7 +10,9 @@ class StockProductionLot(models.Model):
 
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
     tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
+    # gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
+    gross_weight = fields.Float(string="Gross Weight")
+    component_weight = fields.Float(string="Component Weight")
     container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'), 
         ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'), 
         ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'), 
@@ -18,10 +20,10 @@ class StockProductionLot(models.Model):
         ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
 
-    @api.depends('tare_weight', 'product_qty')
-    def _compute_gross_weight(self):
-        for line in self:
-            line.gross_weight = line.product_qty + line.tare_weight
+    # @api.depends('tare_weight', 'product_qty')
+    # def _compute_gross_weight(self):
+    #     for line in self:
+    #         line.gross_weight = line.product_qty + line.tare_weight
 
     @api.constrains('manufacture_date', 'removal_date')
     def _check_date(self):

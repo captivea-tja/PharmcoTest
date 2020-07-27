@@ -117,8 +117,9 @@
             </xpath>
             <xpath expr="//group[@name='main_group']/group" position="after">
                 <group>
-                    <field name="tare_weight"/> 
-                    <field name="gross_weight"/> 
+                    <field name="tare_weight"/>
+                    <field name="component_weight"/>
+                    <field name="gross_weight"/>
                     <field name="container_type"/>
                 </group>
             </xpath>
