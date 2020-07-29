@@ -14,7 +14,7 @@
     'category': 'Manufacturing/Manufacturing',
 
     # any module necessary for this one to work correctly
-    'depends': ['mrp_workorder'],
+    'depends': ['mrp_workorder', 'quality_control'],
 
     # always loaded
     'data': [
