@@ -8,22 +8,23 @@
             <xpath expr="//field[@name='finished_move_line_ids']" position="before">
                 <group>
                     <group>
-                        <field name="manufacture_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
-                        <field name="manufacturer_lot" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
-                        <field name="container_type" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
+                        <field name="supplier_lot" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}"/>
+                        <field name="manufacturer_lot" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}"/>
+                        <field name="manufacture_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}"/>
+                        <field name="container_type" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}"/>
                     </group>
                     <group>
-                        <!-- <field name="expiration_date" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/> -->
-                        <field name="tare_weight" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])]}"/>
-                        <field name="component_weight"/>
-                        <field name="gross_weight"/>
+                        <field name="supplier_id" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}" readonly="1"/>
+                        <field name="tare_weight" attrs="{'required': [('has_tracking', '!=', 'none')], 'readonly': [('state', 'in', ['to_close', 'done', 'cancel'])], 'invisible': [('has_tracking', '=', 'none')]}"/>
+                        <field name="component_weight" attrs="{'invisible': [('has_tracking', '=', 'none')]}"/>
+                        <field name="gross_weight" attrs="{'invisible': [('has_tracking', '=', 'none')]}"/>
                     </group>
                 </group>
             </xpath>
             <xpath expr="//field[@name='move_raw_ids']" position="inside">
                 <tree delete="0" default_order="is_done,sequence" decoration-muted="is_done" decoration-warning="quantity_done - product_uom_qty &gt; 0.0001" decoration-success="not is_done and quantity_done - product_uom_qty &lt; 0.0001" decoration-danger="not is_done and reserved_availability &lt; product_uom_qty and product_uom_qty - reserved_availability &gt; 0.0001" editable="bottom">
                     <field name="product_id" required="1"/>
-                    <field name="lot_id" attrs="{'required': [('has_tracking', '=', 'lot')], 'readonly': [('has_tracking', '!=', 'lot')]}" domain="[('product_id', '=', product_id), ('product_qty', '>=', product_uom_qty)]" context="{'product_uom_qty': product_uom_qty}"/>  
+                    <field name="lot_id" attrs="{'required': [('has_tracking', '=', 'lot')], 'readonly': [('has_tracking', '!=', 'lot')]}" domain="[('product_id', '=', product_id), ('product_qty', '>=', product_uom_qty)]" context="{'product_uom_qty': product_uom_qty, 'filter_lot_details': True}"/>  
                     <field name="company_id" invisible="1"/>
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="name" invisible="1"/>
@@ -65,7 +66,7 @@
         <field name="inherit_id" ref="cap_mo_assign_lot_serial.cap_lot_view_mrp_production_form_view_inherited"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='open_produce_product']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', '|', '|', ('state', 'in', ['draft', 'to_close', 'done', 'cancel']), ('move_line_component_ids', '=', []), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', '|', ('state', 'in', ['draft', 'to_close', 'done', 'cancel']), ('move_line_component_ids', '!=', []), ('routing_id', '!=', False)]}</attribute>
             </xpath>
             <xpath expr="//label[@for='next_serial']" position="attributes">
                 <attribute name="attrs">{'invisible': ['|', '|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('product_id', '=', False)]}</attribute>

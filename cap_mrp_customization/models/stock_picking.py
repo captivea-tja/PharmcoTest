@@ -13,6 +13,8 @@ class Picking(models.Model):
                 move_line.lot_id.tare_weight = move_line.tare_weight
                 move_line.lot_id.container_type = move_line.container_type
                 move_line.lot_id.manufacture_date = move_line.manufacture_date
+                move_line.lot_id.supplier_lot = move_line.supplier_lot
+                move_line.lot_id.supplier_id = move_line.supplier_id.id
         return super(Picking, self).button_validate()
 
     def _create_backorder(self):
@@ -28,4 +30,6 @@ class Picking(models.Model):
                 move.container_type = False
                 move.manufacturer_lot = False
                 move.expiration_date = False
+                move.supplier_lot = False
+                move.supplier_id = False
         return res

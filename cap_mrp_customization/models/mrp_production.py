@@ -9,6 +9,8 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     manufacturer_lot = fields.Char(string="Manufacturer's Lot")
+    supplier_lot = fields.Char(string="Supplier's Lot")
+    supplier_id = fields.Many2one('res.partner', string="Supplier", default=lambda x: x.env.company.partner_id.id)
     tare_weight = fields.Float(string="Tare Weight")
     gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
     component_weight = fields.Float(string="Component Weight", compute="_compute_component_weight")
@@ -18,7 +20,19 @@ class MrpProduction(models.Model):
         ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
         ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture", default=lambda self: fields.Date.today())
-    # expiration_date = fields.Date(string="Expiration Date")
+
+    def record_production(self):
+        res = super(MrpProduction, self).record_production()
+        for line in self.finished_move_line_ids:
+            if line.lot_id:
+                line.lot_id.manufacturer_lot = self.production_id.manufacturer_lot
+                line.lot_id.tare_weight = self.production_id.tare_weight
+                line.lot_id.gross_weight = self.production_id.gross_weight
+                line.lot_id.component_weight = self.production_id.component_weight
+                line.lot_id.container_type = self.production_id.container_type
+                line.lot_id.supplier_lot = self.production_id.supplier_lot
+                line.lot_id.supplier_id = self.production_id.supplier_id.id
+        return res
 
     @api.depends('tare_weight', 'product_qty', 'move_raw_ids')
     def _compute_gross_weight(self):
@@ -40,20 +54,14 @@ class MrpProduction(models.Model):
                         total += component.product_uom_qty
             line.component_weight = total
 
-    # @api.constrains('manufacture_date', 'expiration_date')
-    # def _check_date(self):
-    #     for line in self:
-    #         if line.manufacture_date and line.expiration_date and \
-    #                 line.expiration_date < line.manufacture_date:
-    #             raise ValidationError(
-    #                 _('The removal date cannot be earlier than the manufacture date.'))
-
 
 class MoveLineComponent(models.Model):
     _inherit = 'move.line.component'
 
     @api.model
     def create(self, vals):
+        if vals.get('raw_product_produce_id'):
+            vals.pop('raw_product_produce_id')
         if vals.get('move_id'):
             move_lot_id = self.env['stock.move'].search([('id', '=', vals.get('move_id'))]).lot_id.id
             product_tracking = self.env['product.product'].search([('id', '=', vals.get('product_id'))]).tracking
