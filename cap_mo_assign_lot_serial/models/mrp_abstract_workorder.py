@@ -2,6 +2,7 @@
 
 from odoo import api, models, fields, _
 from odoo.tools import float_compare
+from odoo.exceptions import UserError
 
 
 class MrpAbstractWorkorderLine(models.AbstractModel):
