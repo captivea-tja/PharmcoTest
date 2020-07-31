@@ -65,8 +65,11 @@
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="cap_mo_assign_lot_serial.cap_lot_view_mrp_production_form_view_inherited"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='open_produce_product']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', '|', ('state', 'in', ['draft', 'to_close', 'done', 'cancel']), ('move_line_component_ids', '!=', []), ('routing_id', '!=', False)]}</attribute>
+            <xpath expr="//button[@name='open_produce_product'][1]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', '|', '|', '|', ('state', 'in', ['draft', 'to_close', 'done', 'cancel']), ('is_locked', '=', False), ('reservation_state', '!=', 'assigned'), ('routing_id', '!=', False), ('move_line_component_ids', '!=', [])]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='open_produce_product'][2]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', '|', '|', '|', ('state', 'in', ['draft', 'to_close', 'done', 'cancel']), ('is_locked', '=', False), ('reservation_state', 'not in', ('confirmed', 'waiting')), ('routing_id', '!=', False), ('move_line_component_ids', '!=', [])]}</attribute>
             </xpath>
             <xpath expr="//label[@for='next_serial']" position="attributes">
                 <attribute name="attrs">{'invisible': ['|', '|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('product_id', '=', False)]}</attribute>
@@ -81,7 +84,7 @@
                 <attribute name="attrs">{'invisible': ['|', '|', ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('product_id', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//button[@name='generate_sequence_number']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', '|', ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('product_id', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', '|', '|', ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('product_id', '=', False), ('state', 'in', ['to_close', 'done', 'cancel'])]}</attribute>
             </xpath>
             <xpath expr="//label[@for='next_serial_count']" position="attributes">
                 <attribute name="attrs">{'invisible': ['|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False)]}</attribute>
@@ -90,7 +93,7 @@
                 <attribute name="attrs">{'invisible': ['|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False)]}</attribute>
             </xpath>
             <xpath expr="//button[@name='action_assign_serial_show_details']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', '|', '|', ('display_assign_serial', '=', False), ('has_tracking', 'in', ['none', 'lot']), ('routing_id', '!=', False), ('state', 'in', ['to_close', 'done', 'cancel'])]}</attribute>
             </xpath>
         </field>
     </record>

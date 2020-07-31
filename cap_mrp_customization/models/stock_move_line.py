@@ -11,18 +11,14 @@ class StockMoveLine(models.Model):
     supplier_lot = fields.Char(string="Supplier's Lot")
     supplier_id = fields.Many2one('res.partner', string="Supplier")
     tare_weight = fields.Float(string="Tare Weight")
-    gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
+    component_weight = fields.Float(string="Gross Weight")
+    gross_weight = fields.Float(string="Gross Weight")
     container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
         ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
         ('DRUM', 'DRUM'), ('DRUM-55', 'DRUM-55'), ('DRUM-FIBER', 'DRUM-FIBER'), ('CB500', 'CB500'),
         ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
         ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
-
-    @api.depends('tare_weight', 'qty_done')
-    def _compute_gross_weight(self):
-        for line in self:
-            line.gross_weight = line.qty_done + line.tare_weight
 
     @api.constrains('manufacture_date', 'expiration_date')
     def _check_date(self):
@@ -50,6 +46,7 @@ class StockMoveLine(models.Model):
                 'supplier_id': move_id.supplier_id.id,
                 'expiration_date': move_id.expiration_date,
                 'tare_weight': move_id.tare_weight,
+                'component_weight': move_id.component_weight,
                 'gross_weight': move_id.gross_weight,
                 'container_type': move_id.container_type,
                 'manufacture_date': move_id.manufacture_date
