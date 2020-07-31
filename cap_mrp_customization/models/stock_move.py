@@ -11,7 +11,7 @@ class StockMove(models.Model):
     supplier_id = fields.Many2one('res.partner', string="Supplier")
     expiration_date = fields.Date(string="Expiration Date")
     tare_weight = fields.Float(string="Tare Weight")
-    component_weight = fields.Float(string="Tare Weight")
+    component_weight = fields.Float(string="Component Weight")
     gross_weight = fields.Float(string="Gross Weight", compute="_compute_gross_weight")
     container_type = fields.Selection([('1 GAL', '1 GAL'), ('4x1 BOX', '4x1 BOX'), ('BAG', 'BAG'),
         ('BOTTLE', 'BOTTLE'), ('BOTTLE-2.5', 'BOTTLE-2.5'), ('BOX', 'BOX'), ('DELTANG-5', 'DELTANG-5'),
@@ -21,9 +21,10 @@ class StockMove(models.Model):
     manufacture_date = fields.Date(string="Date of Manufacture")
     lot_id = fields.Many2one('stock.production.lot', string="Lot to consume")
 
-    @api.depends('quantity_done')
+    @api.depends('quantity_done', 'move_line_nosuggest_ids')
     def onchange_quantity_done(self):
-        self.component_weight = self.quantity_done
+        if self.has_tracking == 'lot':
+            self.component_weight = self.quantity_done
 
     def generate_sequence_number(self):
         sequence_ref = self.env.ref('stock.sequence_production_lots')

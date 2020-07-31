@@ -22,12 +22,14 @@
                     <field name="supplier_lot" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                     <field name="manufacturer_lot" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                     <field name="tare_weight" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                    <field name="component_weight" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                    <field name="gross_weight" attrs="{'invisible': [('has_tracking', '=', 'none')]}"/>
                     <field name="container_type" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
-                    <field name="expiration_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                 </group>
             </xpath>
             <xpath expr="//div[3]" position="after">
                 <field name="manufacture_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
+                <field name="expiration_date" attrs="{'invisible': [('has_tracking', '=', 'none')], 'required': [('has_tracking', '!=', 'none')]}"/>
                 <field name="has_tracking" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='next_serial']" position="attributes">
@@ -59,6 +61,7 @@
                         <field name="location_dest_id"/>
                         <field name="lot_id"/>
                         <field name="manufacturer_lot"/>
+                        <field name="supplier_lot"/>
                         <field name="manufacture_date"/>
                         <field name="expiration_date"/>
                         <field name="qty_done"/>
@@ -114,6 +117,9 @@
             <xpath expr="//field[@name='ref']" position="after">
                 <field name="manufacturer_lot" readonly="1"/>
                 <field name="supplier_lot" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="attributes">
+                <attribute name="string">Container Code</attribute>
             </xpath>
             <xpath expr="//field[@name='removal_date']" position="before">
                 <field name="manufacture_date"/>
