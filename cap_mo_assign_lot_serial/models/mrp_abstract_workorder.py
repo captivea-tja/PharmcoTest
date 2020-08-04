@@ -24,7 +24,7 @@ class MrpAbstractWorkorderLine(models.AbstractModel):
             raise UserError(_('Please enter a lot or serial number for %s !' % self.product_id.display_name))
 
         if not context.get('from_auto_assign', False) and self.lot_id and self.product_id.tracking == 'serial' and self.lot_id in self.move_id.move_line_ids.filtered(lambda ml: ml.qty_done).mapped('lot_id'):
-            raise UserError(_('You cannot consume the same serial number twice. Please correct the serial numbers encoded.'))
+            raise UserError(_('You cannot consume the same serial number twice for %s. Please correct the serial numbers encoded.' % self.product_id.display_name))
 
         # Update reservation and quantity done
         for ml in move_lines:

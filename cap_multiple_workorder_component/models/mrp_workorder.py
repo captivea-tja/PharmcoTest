@@ -93,7 +93,7 @@ class MrpProductionWorkcenterLine(models.Model):
 
 
     test_type_all = fields.Boolean(compute='_compute_test_type_components_all')
-    component_qty_to_do_all = fields.Boolean(compute='_compute_test_type_components_all')
+    component_qty_to_do_all = fields.Float(compute='_compute_test_type_components_all')
 
     @api.depends('test_type', 'test_type_2', 'test_type_3', 'test_type_4', 'test_type_5', 'component_remaining_qty', 'component_remaining_qty_2', 'component_remaining_qty_3', 'component_remaining_qty_4', 'component_remaining_qty_5')
     def _compute_test_type_components_all(self):
@@ -105,7 +105,9 @@ class MrpProductionWorkcenterLine(models.Model):
             if wo.test_type not in reg_list and wo.test_type_2 not in reg_list and wo.test_type_3 not in reg_list and wo.test_type_4 not in reg_list and wo.test_type_5 not in reg_list:
                 test_type_all = True
             if wo.component_qty_to_do < 0 and wo.component_qty_to_do_2 < 0 and wo.component_qty_to_do_3 < 0 and wo.component_qty_to_do_4 < 0 and wo.component_qty_to_do_5 < 0:
-               component_qty_to_do_all = True
+               component_qty_to_do_all = -1
+            if wo.component_qty_to_do > 0 and wo.component_qty_to_do_2 > 0 and wo.component_qty_to_do_3 > 0 and wo.component_qty_to_do_4 > 0 and wo.component_qty_to_do_5 > 0:
+               component_qty_to_do_all = 1
 
             wo.test_type_all = test_type_all
             wo.component_qty_to_do_all = component_qty_to_do_all
@@ -485,11 +487,11 @@ class MrpProductionWorkcenterLine(models.Model):
             if float_compare(self.qty_done_2, 0, precision_rounding=rounding) < 0:
                 raise UserError(_('Please enter a positive quantity.'))
             if float_compare(self.qty_done_3, 0, precision_rounding=rounding) < 0:
-                            raise UserError(_('Please enter a positive quantity.'))
+                raise UserError(_('Please enter a positive quantity.'))
             if float_compare(self.qty_done_4, 0, precision_rounding=rounding) < 0:
-                            raise UserError(_('Please enter a positive quantity.'))
+                raise UserError(_('Please enter a positive quantity.'))
             if float_compare(self.qty_done_5, 0, precision_rounding=rounding) < 0:
-                            raise UserError(_('Please enter a positive quantity.'))
+                raise UserError(_('Please enter a positive quantity.'))
 
             # Get the move lines associated with our component
             self.component_remaining_qty -= float_round(self.qty_done, precision_rounding=self.workorder_line_id.product_uom_id.rounding or rounding)
@@ -497,6 +499,7 @@ class MrpProductionWorkcenterLine(models.Model):
             self.component_remaining_qty_3 -= float_round(self.qty_done_3, precision_rounding=workorder_line_id_3.product_uom_id.rounding or rounding)
             self.component_remaining_qty_4 -= float_round(self.qty_done_4, precision_rounding=workorder_line_id_4.product_uom_id.rounding or rounding)
             self.component_remaining_qty_5 -= float_round(self.qty_done_5, precision_rounding=workorder_line_id_5.product_uom_id.rounding or rounding)
+
             # Write the lot and qty to the move line
             self.workorder_line_id.write({'lot_id': self.lot_id.id, 'qty_done': float_round(self.qty_done, precision_rounding=self.workorder_line_id.product_uom_id.rounding or rounding)})
             workorder_line_id_2.write({'lot_id': self.lot_id_2.id, 'qty_done': float_round(self.qty_done_2, precision_rounding=workorder_line_id_2.product_uom_id.rounding or rounding)})
@@ -547,6 +550,12 @@ class MrpProductionWorkcenterLine(models.Model):
             self._change_quality_check(increment=1, children=1, checks=self.skipped_check_ids)
         else:
             self._change_quality_check(increment=1, children=1)
+
+        if continue_production and self.component_remaining_qty <= 0 and self.component_remaining_qty_2 <= 0 and self.component_remaining_qty_3 <= 0 and self.component_remaining_qty_4 <= 0 and self.component_remaining_qty_5 <= 0:
+            if self.skip_completed_checks:
+                self._change_quality_check(increment=1, children=1, checks=self.skipped_check_ids)
+            else:
+                self._change_quality_check(increment=1, children=1)
 
     def _create_subsequent_checks(self):
         """ When processing a step with regiter a consumed material

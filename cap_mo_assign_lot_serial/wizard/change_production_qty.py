@@ -9,6 +9,6 @@ class ChangeProductionQty(models.TransientModel):
     def change_prod_qty(self):
         super(ChangeProductionQty, self).change_prod_qty()
         if self.mo_id:
-        	self.mo_id.next_serial = self.mo_id.product_qty
-        	self.mo_id.is_components_created = False
-        	self.mo_id.move_line_component_ids.unlink()
+            self.mo_id.next_serial_count = self.mo_id.product_qty
+            self.mo_id.is_components_created = False
+            self.mo_id.move_line_component_ids.unlink()
