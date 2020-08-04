@@ -19,6 +19,8 @@ class StockMoveLine(models.Model):
         ('CB1000', 'CB1000'), ('LABEL', 'LABEL'), ('NA', 'NA'), ('PAIL', 'PAIL'), ('PAIL-5', 'PAIL-5'),
         ('PALLET', 'PALLET'), ('TANKER', 'TANKER'), ('TOTE', 'TOTE'), ('TRAY', 'TRAY')], string="Container Type")
     manufacture_date = fields.Date(string="Date of Manufacture")
+    ref = fields.Char('Container Code', related='lot_id.ref',
+        help="Internal reference number in case it differs from the manufacturer's lot/serial number")
 
     @api.constrains('manufacture_date', 'expiration_date')
     def _check_date(self):

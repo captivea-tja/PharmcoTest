@@ -60,6 +60,7 @@
                     <tree>
                         <field name="location_dest_id"/>
                         <field name="lot_id"/>
+                        <field name="ref"/>
                         <field name="manufacturer_lot"/>
                         <field name="supplier_lot"/>
                         <field name="manufacture_date"/>

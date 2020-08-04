@@ -12,10 +12,14 @@ class MrpStockReport(models.TransientModel):
         for data in final_vals:
             # Added an extra column for manufacturer's lot on traceability report
             manufacturer_lot = ''
+            ref = ''
             if data.get('lot_id', False):
                 manufacturer_lot = self.env['stock.production.lot'].browse(
                     data.get('lot_id', False)).mapped('manufacturer_lot')
                 manufacturer_lot = manufacturer_lot and manufacturer_lot[0]
+                ref = self.env['stock.production.lot'].browse(
+                    data.get('lot_id', False)).mapped('ref')
+                ref = ref and ref[0]
             lines.append({
                 'id': autoIncrement(),
                 'model': data['model'],
@@ -33,6 +37,7 @@ class MrpStockReport(models.TransientModel):
                             data.get('product_id', False),
                             data.get('date', False),
                             data.get('lot_name', False),
+                            ref or '',
                             manufacturer_lot or '',
                             data.get('location_source', False),
                             data.get('location_destination', False),
